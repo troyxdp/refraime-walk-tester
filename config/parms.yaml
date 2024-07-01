@@ -1,0 +1,4 @@
+conf_thres : 0.35
+iou_thres : 0.65
+model_name : 'rf_intrusion_yolov7_tiny_v2_4.pt'
+classes_to_save: [0] # 0 for person, 1 for animal, 2 for vehicle

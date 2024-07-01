@@ -1,0 +1,1 @@
+- Potentially put testing buttons on another page to prevent editting of details mid run
