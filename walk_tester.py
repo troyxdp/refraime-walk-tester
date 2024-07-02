@@ -312,8 +312,16 @@ class WalkTester:
 
             while True:
                 if not cam_queue.empty():
+                    # Check if stopbit is set in case it tries to get frame while queue is emptying
+                    if stopbit.is_set():
+                        break
+
                     # Get latest frame from stream
-                    cmd, val = cam_queue.get()
+                    try:
+                        cmd, val = cam_queue.get()
+                    except cam_queue.Empty:
+                        cmd, val = None, None
+                        
                     if cmd == StreamCommands.FRAME:
                         # val is OpenCV image (I think) - CHECK THAT IT IS
                         if val is not None:
@@ -403,14 +411,20 @@ class WalkTester:
                             frame_count += 1
 
                 if stopbit.is_set():
+                    print("Stopbit has been set")
                     break
-                    # sys.exit(0) # commented out because I don't want the program to terminate
 
             cv2.destroyAllWindows()
+
             stopbit.set()
-            print("Closing queue...")
-            cam_queue.close()
-            print("Closed queue")
+
+            # print("Emptying and closing queue...")
+            # while not cam_queue.empty():
+            #     print("Emptying...")
+            #     cam_queue.get()
+            # cam_queue.close()
+            # print("Closed queue")
+
             print("Waiting for stream process to terminate...")
             camProcess.join()
             print("Stream process has terminated - done waiting")

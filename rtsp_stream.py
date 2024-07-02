@@ -266,9 +266,18 @@ class StreamCapture(mp.Process):
 
 
             # logging.error(f"Terminating camera pipeline for camera id {self.camera_id}")
-            print(f"Terminating camera pipeline for camera id {self.camera_id}")
             self.stop.set()
             self.pipeline.set_state(Gst.State.NULL)
+            print("Emptying and closing queue...")
+            while not self.outQueue.empty():
+                try:
+                    print("Emptying...")
+                    self.outQueue.get(block=False)
+                except self.outQueue.Empty:
+                    break
+            self.outQueue.cancel_join_thread()
+            self.outQueue.close()
+            print(f"Terminating camera pipeline for camera id {self.camera_id}")
             sys.exit(0)
 
         except Exception as error:
