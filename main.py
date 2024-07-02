@@ -266,12 +266,12 @@ class AddURLsPage(tk.Frame):
 
     def add_camera(self):
         # Get name and rtsp url of camera to add
-        camera_name = self.camera_name.get()
-        rtsp_url = self.rtsp_url.get()
+        camera_name = self.camera_name.get().strip()
+        rtsp_url = self.rtsp_url.get().strip()
 
-        if not (camera_name.strip() == '' or rtsp_url.strip() == ''):
+        if not (camera_name == '' or rtsp_url == ''):
             # Add camera
-            self.cameras[f'{camera_name.strip()}'] = rtsp_url.strip()
+            self.cameras[f'{camera_name}'] = rtsp_url
             self.camera_combobox['values'] = list(self.cameras.keys())
             self.camera_combobox.current(0)
 
@@ -294,15 +294,17 @@ class AddURLsPage(tk.Frame):
         if len(self.cameras.keys()) > 0:
             # Remove old camera details
             camera_to_edit = self.camera_selected.get()
-            self.cameras.pop(camera_to_edit)
-
+            
             # Get updated info
-            camera_name = self.new_camera_name.get()
-            rtsp_url = self.new_rtsp_url.get()
+            camera_name = self.new_camera_name.get().strip()
+            rtsp_url = self.new_rtsp_url.get().strip()
 
-            if not (camera_name.strip() == '' or rtsp_url.strip() == ''):
+            if not (camera_name == '' or rtsp_url == ''):
+                # Remove old camera details
+                self.cameras.pop(camera_to_edit)
+
                 # Add it to cameras dict and values of combobox
-                self.cameras[f'{camera_name.strip()}'] = rtsp_url.strip()
+                self.cameras[f'{camera_name}'] = rtsp_url
                 self.camera_combobox['values'] = list(self.cameras.keys())
 
                 # Print for debugging purposes
@@ -393,6 +395,9 @@ class AddURLsPage(tk.Frame):
 
             # Run test - stops when 'q' is pressed
             self.walk_tester.run_processor(curr_rtsp, curr_cam)
+
+            # For debugging
+            print("Finished test for camera {}\n".format(curr_cam))
 
             # Unhide the stop test button
             self.stop_test_button.grid(row=17, column=1, sticky=tk.W)

@@ -403,13 +403,17 @@ class WalkTester:
                             frame_count += 1
 
                 if stopbit.is_set():
-                    cam_queue.close()
                     break
                     # sys.exit(0) # commented out because I don't want the program to terminate
 
             cv2.destroyAllWindows()
             stopbit.set()
+            print("Closing queue...")
+            cam_queue.close()
+            print("Closed queue")
+            print("Waiting for stream process to terminate...")
             camProcess.join()
+            print("Stream process has terminated - done waiting")
 
         except Exception as error:
 
@@ -424,8 +428,10 @@ class WalkTester:
                 pass
             # Attempt to wait for the cam process to terminate if it exists
             try:
+                print("Waiting for stream process to terminate...")
                 camProcess.join()
+                print("Stream process has terminated - done waiting")
             except NameError:
-                pass
+                print("No stream process exists - done waiting")
 
             # sys.exit(0) # commented out because I don't want the program to terminate

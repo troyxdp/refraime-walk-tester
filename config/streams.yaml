@@ -1,4 +1,6 @@
-Back: rtsp://Buhund:Hund*1not@192.168.10.55:9988/streaming/channels/402
+Back Camera 1: rtsp://Buhund:Hund*1not@192.168.10.55:9988/streaming/channels/402
+Back Camera 2: rtsp://Buhund:Hund*1not@192.168.10.55:9988/streaming/channels/502
 Deck: rtsp://Buhund:Hund*1not@192.168.10.55:9988/streaming/channels/602
 Parking: rtsp://Buhund:Hund*1not@192.168.10.55:9988/streaming/channels/302
 Pool: rtsp://Buhund:Hund*1not@192.168.10.55:9988/streaming/channels/702
+XyZ: rtsp://Buhund:Hund*1not@192.168.10.55:9988/streaming/channels/102
