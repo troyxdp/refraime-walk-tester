@@ -381,13 +381,19 @@ class WalkTester:
                                         f'alerts/detections/cam_{camera_name}_frame_{frame_count}.png', 
                                         val
                                     )
-                                    # Save image with bboxes plotted on it
+                                    # Save image with bboxes plotted
                                     cv2.imwrite(
                                         f'alerts/plotted_detections/cam_{camera_name}_frame_{frame_count}.png', 
                                         img0
                                     )
+                                else:
+                                    # Save image that doesn't have any detections from selected classes
+                                    cv2.imwrite(
+                                        f'alerts/detectionless/cam_{camera_name}_frame_{frame_count}.png', 
+                                        val
+                                    )
                             else:
-                                # Save image that doesn't have any detections in it
+                                # Save image that doesn't have any detections
                                 cv2.imwrite(
                                     f'alerts/detectionless/cam_{camera_name}_frame_{frame_count}.png', 
                                     val
