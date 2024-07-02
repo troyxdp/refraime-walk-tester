@@ -31,19 +31,19 @@ class WalkTester:
         '2' : 'vehicle',    
     }
 
-    def __init__(self, ):
+    def __init__(self, model_name='weights/rf_intrusion_yolov7_tiny_v2_4.pt'):
         # Get parameters for test - model name, confidence threshold, iou threshold, 
         # and classes to save
         parms = self.get_parms('config/parms.yaml')
-        if parms and len(parms) == 4:
+        if parms and len(parms) == 3:
             self.conf_thres = parms['conf_thres']
             self.iou_thres = parms['iou_thres']
-            self.model_name = parms['model_name']
             self.classes_to_save = [int(x) for x in parms['classes_to_save']]
         else:
             self.conf_thres = 0.35
             self.iou_thres = 0.65
-            self.model_name = 'rf_intrusion_yolov7_tiny_v2_4.pt'
+
+        self.model_name = model_name
 
         # Load model
         print("Loading model...")

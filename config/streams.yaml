@@ -1,3 +1,3 @@
-back: rtsp://Buhund:Hund*1not@192.168.10.55:9988/streaming/channels/402
-deck: rtsp://Buhund:Hund*1not@192.168.10.55:9988/streaming/channels/602
-pool: rtsp://Buhund:Hund*1not@192.168.10.55:9988/streaming/channels/702
+Deck: rtsp://Buhund:Hund*1not@192.168.10.55:9988/streaming/channels/602
+Parking: rtsp://Buhund:Hund*1not@192.168.10.55:9988/streaming/channels/302
+Pool: rtsp://Buhund:Hund*1not@192.168.10.55:9988/streaming/channels/702

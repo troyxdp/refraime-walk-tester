@@ -46,5 +46,5 @@ alerts/detections/*
 alerts/plotted_detections/*
 
 # Models
-rf_intrusion_yolov7x_v9.pt
-rf_intrusion_yolov7_tiny_v2_3.pt
+weights/rf_intrusion_yolov7x_v9.pt
+weights/rf_intrusion_yolov7_tiny_v2_3.pt

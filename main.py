@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import yaml
+import os
 # import sys
 
 from walk_tester import WalkTester
@@ -45,11 +46,15 @@ class AddURLsPage(tk.Frame):
 
         self.curr_cam_num = -1
 
+        self.models = os.listdir('weights')
+        for i in range(len(self.models)):
+            self.models[i] = os.path.splitext(self.models[i])[0]
+
         # PAGE TITLE SECTION
         # Page title label
         page_title_label = tk.Label(
             self,
-            text="Configure Camera Feeds",
+            text="Walk Tester",
             font=('Times', 24, 'bold')
         )
         page_title_label.grid(row=1, column=2)
@@ -170,11 +175,12 @@ class AddURLsPage(tk.Frame):
         if len(self.cameras.keys()) > 0:
             self.camera_combobox.current(0)
             initial_cam = self.camera_combobox.get()
-            for i, cam in enumerate(self.camera_combobox['values']):
+            for cam in self.camera_combobox['values']:
                 if cam == initial_cam:
                     self.camera_selected.set(cam)
                     self.new_camera_name.set(cam)
                     self.new_rtsp_url.set(self.cameras[cam])
+                    break
 
         # Buttons for editting camera details
         self.apply_edit_button = tk.Button(
@@ -195,6 +201,32 @@ class AddURLsPage(tk.Frame):
         )
         self.delete_camera_button.grid(row=11, column=2, sticky=tk.W)
 
+        # MODEL SELECTOR
+        # Label for section
+        model_selector_label = tk.Label(
+            self,
+            text="Model Selector:",
+            font=('Times', 18, 'bold')
+        )
+        model_selector_label.grid(row=12, column=1, sticky=tk.W)
+        # Label for combobox
+        model_combobox_label = tk.Label(
+            self,
+            text="Model: ",
+            font=('Times', 14)
+        )
+        model_combobox_label.grid(row=13, column=1, sticky=tk.E)
+        # Combobox and string var to store value in it
+        self.model_selected = tk.StringVar(value='')
+        model_combobox = ttk.Combobox(
+            self,
+            values=list(self.models),
+            state='readonly',
+            textvariable=self.model_selected
+        )
+        model_combobox.grid(row=13, column=2, sticky=tk.W)
+        model_combobox.current(0)
+
         # Button to save config
         save_config_button = tk.Button(
             self,
@@ -203,7 +235,7 @@ class AddURLsPage(tk.Frame):
             padx=10,
             pady=5
         )
-        save_config_button.grid(row=12, column=1, sticky=tk.W, pady=5)
+        save_config_button.grid(row=15, column=1, sticky=tk.W, pady=5)
 
         # Button to start walk test/resume on next camera and display info about what cam is being tested
         self.start_test_button = tk.Button(
@@ -228,7 +260,7 @@ class AddURLsPage(tk.Frame):
             pady=5
         )
 
-        self.walk_tester = WalkTester()
+        self.walk_tester = None
 
 
 
@@ -290,7 +322,7 @@ class AddURLsPage(tk.Frame):
 
     def delete_camera(self):
         camera_to_delete = self.camera_selected.get()
-        if not camera_to_delete == '':
+        if not camera_to_delete.strip() == '':
             self.cameras.pop(camera_to_delete)
             self.camera_combobox['values'] = list(self.cameras.keys())
             if len(self.cameras.keys()) > 0:
@@ -318,8 +350,15 @@ class AddURLsPage(tk.Frame):
             with open('config/streams.yaml', 'w') as f:
                 yaml.dump(self.cameras, f)
 
+            # Initialize walk tester object
+            if self.model_selected.get().strip() == '':
+                self.walk_tester = WalkTester()
+            else:
+                model_name = f'weights/{self.model_selected.get().strip()}.pt'
+                self.walk_tester = WalkTester(model_name=model_name)
+
             # Only display start button now
-            self.start_test_button.grid(row=13, column=1, sticky=tk.W)
+            self.start_test_button.grid(row=16, column=1, sticky=tk.W)
             self.start_test_button.configure(text="Start")
 
             # Set text fields to disabled to prevent modification of data
@@ -343,20 +382,20 @@ class AddURLsPage(tk.Frame):
 
             # Get RTSP URL and cam name to run test on
             self.curr_cam_num += 1
-            curr_cam = list(self.cameras.keys())[self.curr_cam_num]
-            curr_rtsp = list(self.cameras.values())[self.curr_cam_num]
+            curr_cam = list(self.cameras.keys())[self.curr_cam_num].strip()
+            curr_rtsp = list(self.cameras.values())[self.curr_cam_num].strip()
 
             # Display info about test
             test_info_text = f"Running test for '{curr_cam}' camera"
             self.test_info.set(test_info_text)
-            self.test_info_label.grid(row=13, column=2, sticky=tk.W)
+            self.test_info_label.grid(row=16, column=2, sticky=tk.W)
             print(test_info_text)
 
             # Run test - stops when 'q' is pressed
             self.walk_tester.run_processor(curr_rtsp, curr_cam)
 
             # Unhide the stop test button
-            self.stop_test_button.grid(row=14, column=1, sticky=tk.W)
+            self.stop_test_button.grid(row=17, column=1, sticky=tk.W)
             self.test_info_label.grid_forget()
 
             # If it is just done the final camera, set the button text to "Finish"
@@ -379,6 +418,9 @@ class AddURLsPage(tk.Frame):
             self.add_camera_button.config(state='normal')
             self.apply_edit_button.config(state='normal')
             self.delete_camera_button.config(state='normal')
+
+            # Reset curr_cam_num so tests can be run again
+            self.curr_cam_num = -1
 
     def stop_test(self):
         # Hide all the buttons and reset curr_cam_num
